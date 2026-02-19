@@ -82,6 +82,13 @@ STEP6: CI using github action
         4th stage is update helm with docker image that we created
         after this cd comes in picture argocd, argocd will pull helm chart and deploy it onto the k8s cluster
 
-STEP7: CD using GITOPS/argoCD
 
 write the github actions file and add the secrets in the action secrets of the repo setting 
+
+STEP7: CD using GITOPS/argoCD
+     install argocd
+      kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml 
+
+    kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+    
