@@ -60,3 +60,28 @@ Step4: ingress controller config
     in orgnization we'll use the company host name
 
 STEP5: Helm chart creation
+    parameterize Kubernetes manifests so the same application can be deployed to dev/qa/prod with different values, without duplicating YAM
+    Helm enables reusable Kubernetes templates with environment-specific values, eliminating YAML duplication and simplifying multi-environment GitOps deployments.
+    cd helm
+    helm create go-web-app-chart
+    just remember what is chart, values and templete
+    chart- provides info of chart (metadata)
+    templetes- 
+    delete everythig in the kubectl 
+    and then install everything again using helm 
+    helm install go-web-app ./go-web-app-chart
+    helm uninstall go-web-app //to uninstall everythin
+
+ CI/CD
+
+STEP6: CI using github action
+    multiple stages 
+        first stage is build and unit test
+        2nd stage is run static code analysis
+        3rd stage create docker image and push it 
+        4th stage is update helm with docker image that we created
+        after this cd comes in picture argocd, argocd will pull helm chart and deploy it onto the k8s cluster
+
+STEP7: CD using GITOPS/argoCD
+
+write the github actions file and add the secrets in the action secrets of the repo setting 
