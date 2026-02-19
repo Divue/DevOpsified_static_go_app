@@ -8,7 +8,7 @@ image:
   repository: divue/go-web-app
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "22202155197"
+  tag: "22202569724"
 
 ingress:
   enabled: false
