@@ -3,33 +3,29 @@
 ```mermaid
 flowchart TD
 
-%% Developer
-A[Developer] --> B[GitHub Repository]
+A[Developer Push] --> B[GitHub Repo]
 
-%% CI
-subgraph CI Pipeline
-B --> C[Build & Test]
-C --> D[Lint]
-D --> E[Build Docker Image]
-E --> F[Push Image to Registry]
-F --> G[Update Helm values.yaml]
-G --> H[Commit Tag Update]
+subgraph CI
+B --> C[Build]
+C --> D[Test]
+D --> E[Lint]
+E --> F[Build Docker Image]
+F --> G[Push Image]
+G --> H[Update Helm Tag]
+H --> I[Commit Tag]
 end
 
-%% GitOps
-subgraph GitOps (ArgoCD)
-H --> I[Watch Repo]
-I --> J[Sync Application]
+subgraph GitOps
+I --> J[ArgoCD Watch]
+J --> K[ArgoCD Sync]
 end
 
-%% Cluster
-subgraph AWS EKS Cluster
-J --> K[Helm Chart]
-K --> L[Deployment]
-L --> M[Service]
-M --> N[Ingress]
-N --> O[AWS Load Balancer]
+subgraph EKS
+K --> L[Helm Chart]
+L --> M[Deployment]
+M --> N[Service]
+N --> O[Ingress]
+O --> P[LoadBalancer]
 end
 
-%% User
-O --> P[User Browser]
+P --> Q[User]
