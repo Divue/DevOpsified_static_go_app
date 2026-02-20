@@ -1,29 +1,35 @@
 # System Architecture
 
 ```mermaid
-flowchart TD
+flowchart LR
 
-A[Developer Push] --> B[GitHub Repo]
+%% ---------- DEV ----------
+A[Developer] --> B[GitHub Repository]
 
-B --> C[GitHub Actions CI]
+%% ---------- CI ----------
+subgraph CI Pipeline (GitHub Actions)
+B --> C[Build & Test]
+C --> D[Run Linter]
+D --> E[Build Docker Image]
+E --> F[Push Image to DockerHub]
+F --> G[Update Helm values.yaml Tag]
+G --> H[Commit Back to Repo]
+end
 
-C --> D[Build Go Binary]
-C --> E[Run Tests]
-C --> F[Run Lint]
-C --> G[Build Docker Image]
+%% ---------- GITOPS ----------
+subgraph GitOps
+H --> I[ArgoCD Watches Repo]
+I --> J[Sync Application]
+end
 
-G --> H[Push Image to DockerHub]
-
-H --> I[Update Helm values.yaml with new image tag]
-
-I --> J[ArgoCD detects change]
-
-J --> K[Sync to EKS Cluster]
-
-K --> L[Kubernetes Deployment]
-L --> M[Service]
-M --> N[Ingress]
-
+%% ---------- K8S ----------
+subgraph AWS EKS Cluster
+J --> K[Helm Chart]
+K --> L[Deployment]
+K --> M[Service]
+K --> N[Ingress]
 N --> O[AWS Load Balancer]
+end
 
+%% ---------- USER ----------
 O --> P[User Browser]
