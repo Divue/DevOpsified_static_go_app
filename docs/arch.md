@@ -1,9 +1,9 @@
 # System Architecture
 
 ```mermaid
-flowchart LR
+flowchart TD
 
-A[Developer] --> B[GitHub Repo]
+A[Developer Push] --> B[GitHub Repo]
 
 subgraph CI
 B --> C[Build & Test]
@@ -16,14 +16,14 @@ end
 
 subgraph GitOps
 H --> I[ArgoCD Watches Repo]
-I --> J[Sync to Cluster]
+I --> J[Sync Application]
 end
 
-subgraph EKS
+subgraph EKS Cluster
 J --> K[Helm Chart]
 K --> L[Deployment]
-K --> M[Service]
-K --> N[Ingress]
+L --> M[Service]
+M --> N[Ingress]
 N --> O[AWS LoadBalancer]
 end
 
