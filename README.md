@@ -1,167 +1,125 @@
 # DevOpsified Go Web Application (EKS + GitOps)
 
-This project demonstrates how a simple Go web application can be deployed using production-style DevOps practices including containerization, CI/CD automation, GitOps, Helm, and Kubernetes deployment on AWS EKS.
+A simple Go web app deployed using a full cloud-native DevOps workflow: CI/CD, containerization, GitOps, Helm, and Kubernetes on AWS EKS.  
+The focus is not the app itself, but the deployment architecture and automation around it.
 
-Instead of manually deploying a Go app, this repository shows a complete automated pipeline from code push to production deployment.
-
----
-
-# Architecture
-
-See detailed architecture diagram:
-
-docs/architecture.md
-
-High-level flow:
-
-Developer → GitHub → CI builds Docker image → pushes to registry → updates Helm chart → ArgoCD detects change → syncs to EKS → Ingress exposes application → User accesses via Load Balancer
+This repository shows the complete path from a code push to a running application in a Kubernetes cluster with zero manual deployment steps.
 
 ---
 
-# Tech Stack
+## Architecture
+
+Full diagram:  
+`docs/architecture.md`
+
+**Flow**
+
+Developer push → GitHub → CI builds & tests → Docker image built → pushed to registry → Helm tag updated → ArgoCD detects change → deploys to EKS → Ingress exposes app → Load balancer serves users
+
+---
+
+## Stack
 
 - Go (net/http)
-- Docker (multi-stage, distroless image)
+- Docker (multi-stage + distroless)
 - Kubernetes
 - Helm
 - AWS EKS
 - GitHub Actions
-- ArgoCD (GitOps)
+- ArgoCD
 - NGINX Ingress Controller
+- DockerHub
 
 ---
 
-# What This Project Implements
+## What’s Implemented
 
-## 1. Containerization
-
+### Containerization
 - Multi-stage Docker build
-- Minimal distroless runtime image
-- Reduced attack surface
+- Distroless runtime image
+- Minimal attack surface
 - Small image size
-- Application exposed on port 8080
+- Exposes port 8080
 
----
+### Kubernetes
+- Helm-based deployment
+- Deployment + Service + Ingress
+- Parameterized image tags
+- AWS Load Balancer integration
+- Runs on EKS
 
-## 2. Kubernetes Deployment
-
-- Deployment resource
-- Service (ClusterIP)
-- Ingress configuration
-- Helm chart for parameterized deployments
-- Deployed to AWS EKS cluster
-
----
-
-## 3. CI Pipeline (GitHub Actions)
-
-On every push to main:
+### CI Pipeline
+Runs on every push to `main`:
 
 - Build Go binary
-- Run unit tests
-- Run golangci-lint
+- Run tests
+- Run lint
 - Build Docker image
 - Push image to DockerHub
-- Update Helm chart image tag automatically
+- Update Helm image tag automatically
+- Commit updated tag back to repo
 
-CI Proof:
+**CI run**
 
 ![CI](docs/screenshots/01_ci_success.png)
 
 ---
 
-## 4. GitOps Continuous Deployment (ArgoCD)
-
+### GitOps Deployment
 - ArgoCD watches the repository
-- When Helm tag changes, ArgoCD detects drift
-- Automatically syncs application to EKS cluster
-- Declarative deployment model
+- Helm tag update triggers sync
+- Cluster state reconciled automatically
+- No manual kubectl deploys
 
-ArgoCD Proof:
+**ArgoCD sync**
 
 ![ArgoCD](docs/screenshots/02_argocd_sync.png)
 
 ---
 
-## 5. Kubernetes Cluster Evidence
+### Cluster State
 
-All pods running:
+Pods running:
 
 ![Pods](docs/screenshots/03_k8s_pods_running.png)
 
-EKS worker nodes:
+EKS nodes:
 
 ![Nodes](docs/screenshots/04_eks_nodes.png)
 
 ---
 
-## 6. Application Exposure
+### Application Access
 
-- Ingress resource configured
-- AWS Load Balancer created
-- Application accessible externally
-
-App UI:
+- Ingress configured
+- AWS load balancer provisioned
+- App reachable externally
 
 ![App](docs/screenshots/05_app_ui.png)
 
 ---
 
-# CI/CD + GitOps Flow (Detailed)
+## End-to-End Flow
 
-1. Developer pushes code to GitHub
-2. GitHub Actions pipeline starts
-3. Application is built and tested
-4. Docker image is built using multi-stage Dockerfile
-5. Image pushed to DockerHub
-6. CI updates Helm chart image tag using run ID
-7. Commit is pushed back to repository
-8. ArgoCD detects repository change
-9. ArgoCD syncs application state to EKS
-10. Kubernetes performs rolling update
-11. Ingress exposes updated version via Load Balancer
+1. Push code
+2. CI builds and tests
+3. Docker image built
+4. Image pushed to registry
+5. Helm values updated
+6. Commit pushed back
+7. ArgoCD detects change
+8. ArgoCD syncs to cluster
+9. Kubernetes rolls update
+10. Ingress routes traffic
+11. App live
 
-This completes a full GitOps deployment loop.
+Fully automated GitOps loop.
 
 ---
 
-# Running Locally
+## Run Locally
 
-Run without Docker:
+```bash
 go run main.go
-access ti on : http://localhost:8080/courses
 
-# Optional: Recreate EKS Cluster 
-eksctl create cluster --name demo-cluster --region ap-south-1 --nodes 2
-
-Install ArgoCD:
-
-kubectl create namespace argocd
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-
-
-# Key DevOps Concepts Demonstrated
-
-- Multi-stage Docker builds
-- Distroless container runtime
-- Kubernetes Deployments and Services
-- Ingress + AWS Load Balancer
-- Helm templating
-- GitHub Actions CI automation
-- Image tagging strategy
-- GitOps deployment model with ArgoCD
-- Cluster scaling and troubleshooting
-- Node capacity debugging
-
----
-
-
-This project demonstrates:
-
-- Real cloud deployment on AWS EKS
-- End-to-end CI/CD pipeline
-- GitOps workflow implementation
-- Infrastructure troubleshooting skills
-- Production-style deployment architecture
-
----
+http://localhost:8080/courses
