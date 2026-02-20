@@ -3,33 +3,28 @@
 ```mermaid
 flowchart LR
 
-%% ---------- DEV ----------
-A[Developer] --> B[GitHub Repository]
+A[Developer] --> B[GitHub Repo]
 
-%% ---------- CI ----------
-subgraph CI Pipeline (GitHub Actions)
+subgraph CI
 B --> C[Build & Test]
-C --> D[Run Linter]
+C --> D[Lint]
 D --> E[Build Docker Image]
 E --> F[Push Image to DockerHub]
-F --> G[Update Helm values.yaml Tag]
+F --> G[Update Helm Tag]
 G --> H[Commit Back to Repo]
 end
 
-%% ---------- GITOPS ----------
 subgraph GitOps
 H --> I[ArgoCD Watches Repo]
-I --> J[Sync Application]
+I --> J[Sync to Cluster]
 end
 
-%% ---------- K8S ----------
-subgraph AWS EKS Cluster
+subgraph EKS
 J --> K[Helm Chart]
 K --> L[Deployment]
 K --> M[Service]
 K --> N[Ingress]
-N --> O[AWS Load Balancer]
+N --> O[AWS LoadBalancer]
 end
 
-%% ---------- USER ----------
 O --> P[User Browser]
