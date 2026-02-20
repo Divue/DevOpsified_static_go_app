@@ -9,6 +9,7 @@ on:
       - 'k8s/**'
       - 'README.md'
       - 'steps.md'
+      - 'docs/**'
 
 jobs:
 
