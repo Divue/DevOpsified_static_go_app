@@ -1,40 +1,35 @@
-Developer
-   ↓ push
-GitHub Repository
-   ↓
-GitHub Actions (CI)
-   - Build
-   - Test
-   - Lint
-   - Build Docker image
-   - Push to DockerHub
-   - Update Helm tag
-   ↓
-Helm values.yaml updated
-   ↓
-ArgoCD watches repo
-   ↓
-ArgoCD syncs to EKS
-   ↓
-Kubernetes Deployment
-   ↓
-Service
-   ↓
-Ingress
-   ↓
-AWS Load Balancer
-   ↓
-User Browser
+# Architecture
 
+```mermaid
+flowchart TD
 
-**Flow**
+%% Developer
+A[Developer] --> B[GitHub Repository]
 
-Developer → GitHub 
-→ CI builds image 
-→ pushes to registry 
-→ updates Helm tag
-→ ArgoCD detects change 
-→ deploys to EKS 
-→ Ingress exposes app 
+%% CI
+subgraph CI Pipeline
+B --> C[Build & Test]
+C --> D[Lint]
+D --> E[Build Docker Image]
+E --> F[Push Image to Registry]
+F --> G[Update Helm values.yaml]
+G --> H[Commit Tag Update]
+end
 
-That is a full GitOps loop.
+%% GitOps
+subgraph GitOps (ArgoCD)
+H --> I[Watch Repo]
+I --> J[Sync Application]
+end
+
+%% Cluster
+subgraph AWS EKS Cluster
+J --> K[Helm Chart]
+K --> L[Deployment]
+L --> M[Service]
+M --> N[Ingress]
+N --> O[AWS Load Balancer]
+end
+
+%% User
+O --> P[User Browser]
