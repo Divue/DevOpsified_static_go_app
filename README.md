@@ -166,8 +166,3 @@ This project demonstrates:
 - Production-style deployment architecture
 
 ---
-
-# Author
-
-Divue
-Engineering Student
