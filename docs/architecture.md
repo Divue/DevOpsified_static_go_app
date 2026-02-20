@@ -2,29 +2,13 @@
 
 ```mermaid
 flowchart TD
-
 A[Developer Push] --> B[GitHub Repo]
-
-subgraph CI
-    B --> C[Build and Test]
-    C --> D[Lint]
-    D --> E[Build Docker Image]
-    E --> F[Push Image to DockerHub]
-    F --> G[Update Helm Tag]
-    G --> H[Commit Back to Repo]
-end
-
-subgraph GitOps
-    H --> I[ArgoCD Watches Repo]
-    I --> J[Sync Application]
-end
-
-subgraph EKS
-    J --> K[Helm Chart]
-    K --> L[Deployment]
-    L --> M[Service]
-    M --> N[Ingress]
-    N --> O[AWS LoadBalancer]
-end
-
-O --> P[User Browser]
+B --> C[CI Build and Test]
+C --> D[Build Docker Image]
+D --> E[Push Image to DockerHub]
+E --> F[Update Helm Tag]
+F --> G[ArgoCD Detects Change]
+G --> H[Deploy to EKS]
+H --> I[Ingress]
+I --> J[AWS Load Balancer]
+J --> K[User Browser]
