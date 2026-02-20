@@ -3,64 +3,27 @@
 ```mermaid
 flowchart TD
 
-A[Developer Push to GitHub] --> B[GitHub Actions CI]
+A[Developer Push] --> B[GitHub Repo]
 
-B --> C[Build Go Binary]
-B --> D[Run Tests]
-B --> E[Run Lint]
-B --> F[Build Docker Image]
+B --> C[GitHub Actions CI]
 
-F --> G[Push Image to Docker Hub]
+C --> D[Build Go Binary]
+C --> E[Run Tests]
+C --> F[Run Lint]
+C --> G[Build Docker Image]
 
-G --> H[Update Helm values.yaml with new image tag]
+G --> H[Push Image to DockerHub]
 
-H --> I[Git Commit from CI]
+H --> I[Update Helm values.yaml with new image tag]
 
-I --> J[ArgoCD GitOps Controller]
+I --> J[ArgoCD detects change]
 
-J --> K[Sync Kubernetes Cluster]
+J --> K[Sync to EKS Cluster]
 
-K --> L[Helm Chart Deployment]
+K --> L[Kubernetes Deployment]
+L --> M[Service]
+M --> N[Ingress]
 
-L --> M[Kubernetes Deployment]
-L --> N[Service]
-L --> O[Ingress]
+N --> O[AWS Load Balancer]
 
-O --> P[AWS Load Balancer]
-
-P --> Q[User Browser]
-
-subgraph AWS EKS Cluster
-M
-N
-O
-end
-
-subgraph CI Pipeline
-B
-C
-D
-E
-F
-G
-H
-I
-end
-
-subgraph GitOps
-J
-K
-end
-
-
-**Flow**
-
-Developer → GitHub  
-→ CI builds image  
-→ pushes to registry  
-→ updates Helm tag  
-→ ArgoCD detects change  
-→ deploys to EKS  
-→ Ingress exposes app  
-
-That is a full GitOps loop.
+O --> P[User Browser]
